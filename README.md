@@ -76,3 +76,6 @@ Throughput differences illustrate how multi-core execution and vectorization com
 - **Out-of-memory**: Reduce `--length` or iterations; the default array consumes ~16 MB (4 million * 4 bytes).
 
 Feel free to adapt `Program.cs` to plug in other math kernels (Fourier transforms, image filters, etc.) to explore how SIMD-friendly algorithms scale across Intel and ARM alike.
+
+## License
+Released under the [MIT License](LICENSE).
