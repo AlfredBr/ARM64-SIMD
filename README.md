@@ -28,10 +28,15 @@ The workload iterates a chaotic logistic-map function for each element of a gene
 ### ARM64 SIMD : width = 4 lanes, dataset = 4,000,000 floats x 150 chaos iterations
 | Mode   | Time (ms) | Throughput (M iter/s) | Checksum       |
 |--------------------|-----------:|-----------------------:|----------------:|
-| Scalar (1 thread)  |    6,871.4  |  87.3  |  2185151.8441
-| Parallel (1 thread per core) |   1,780.0  |  337.1  |  2185151.8441
-| Parallel + SIMD (4 lanes)    |     473.6   |  1,266.9  |  2185151.8441
-| GPU (ILGPU, CUDA, NVIDIA Maxwell) | 208.1   |  2,883.3  |  2185151.8441
+| Scalar (1 thread)  |    6,871.4  |  87.3  |  2185151.8441 |
+| Parallel (1 thread per core) |   1,780.0  |  337.1  |  2185151.8441 |
+| Parallel + SIMD (4 lanes)    |     473.6   |  1,266.9  |  2185151.8441 |
+| GPU (ILGPU, CUDA, NVIDIA Maxwell) | 208.1   |  2,883.3  |  2185151.8441 |
+
+- Throughput = (dataset length × iterations) / time in seconds
+- Moving from scalar to parallel execution yields a significant speedup roughly proportional to the number of CPU cores.
+- Adding SIMD on top of parallelism further amplifies throughput by processing multiple data points per instruction.
+- The GPU implementation achieves the highest throughput, although the advantage is less pronounced on smaller datasets due to data transfer overheads.  The GPU performance gain can be quite surprising on larger workloads.
 ---
 
 ## How It Works
