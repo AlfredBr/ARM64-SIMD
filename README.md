@@ -9,6 +9,8 @@ A .NET 10 console application that explores four increasingly optimized implemen
 
 The workload iterates a chaotic logistic-map function for each element of a generated float array. Chaotic math is branch-free but multiplies aggressively, making it a good fit for SIMD demonstrations.
 
+NOTE: This runs fine on my Intel i7-12700k CPU (8x32bit vector lanes) and the GPU code runs fine with my GTX3080 installed.
+
 ---
 
 ## How It Works

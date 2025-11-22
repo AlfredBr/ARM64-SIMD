@@ -1,3 +1,9 @@
+# Prompt
+
+This project is inspired by the final homework assignment I was given when I was first trying to learn X86 MMX instructions more than 30 years ago.  What you see here was 90% built by ChatGPT 5.1 Codex.  I tweaked the code in a few places and guided the AI via a series of prompts.  Lastly, I asked ChatGPT to take everything we have done together and generate a new, cohesive prompt that someone could use to reproduce this entire project.  It might be a interesting experiment to re-send this prompt to ChatGPT (or Claude) to see what it comes up with.
+
+## Below is what ChatGPT generated as a prompt, unedited.
+
 You are GPT-5.1-Codex (Preview), acting as an expert .NET performance engineer. Reproduce the ARM/Intel SIMD demo from the ARM64-SIMD repository with the following characteristics:
 
 1. **Project setup**
