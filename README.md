@@ -5,7 +5,7 @@ A .NET 10 console application that explores four increasingly optimized implemen
 1. **Scalar (single thread)** – traditional loop, easiest to understand.
 2. **Parallel scalar** – partitions the scalar loop across CPU cores via `Parallel.For`.
 3. **Parallel + SIMD** – uses `System.Numerics.Vector<float>` inside the parallel loop so each core processes multiple elements per instruction (works on Intel SSE/AVX and ARM AdvSIMD).
-4. **GPU (ILGPU)** – launches the same logistic-map update on any CUDA-capable NVIDIA GPU via ILGPU, so the workload can be offloaded on both Windows and Linux boxes.
+4. **GPU (ILGPU)** – launches the same logistic-map update on any CUDA-capable NVIDIA GPU via ILGPU, so the workload can be offloaded on both Windows and Linux boxes.  BTW: ILGPU is awesome!  It is the only C# GPU framework I've found that works on both Windows and Linux.
 
 The workload iterates a chaotic logistic-map function for each element of a generated float array. Chaotic math is branch-free but multiplies aggressively, making it a good fit for SIMD demonstrations.
 
