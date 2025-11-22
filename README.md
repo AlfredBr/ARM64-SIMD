@@ -107,10 +107,10 @@ Throughput differences illustrate how multi-core execution and vectorization com
 ---
 
 ## Troubleshooting
-- **Release run slower than expected**: Ensure the process is 64-bit and your CPU is not thermally throttled. Running from Visual Studio with the debugger attached may force Debug optimizations off.
-- **SIMD not hardware accelerated**: `Vector.IsHardwareAccelerated` returns false on very old CPUs or when targeting x86 without enabling SSE2. Switch to `net10.0` (already configured) and run on 64-bit.
-- **Out-of-memory**: Reduce `--length` or iterations; the default array consumes ~16 MB (4 million * 4 bytes).
-- **GPU benchmark missing**: Verify the CUDA driver/toolkit installation (`nvidia-smi`) and that the process has permission to access the device. ILGPU logs which accelerator it picked at startup.
+- **Is Release run slower than expected?**: Ensure the process is 64-bit and your CPU is not thermally throttled. Running from Visual Studio with the debugger attached may force Debug optimizations off.
+- **Is SIMD accelerated on your hardware?**: `Vector.IsHardwareAccelerated` returns false on very old CPUs or when targeting x86 without enabling SSE2. Switch to `net10.0` (already configured) and run on 64-bit.
+- **Running out-of-memory?**: Reduce `--length` or iterations; the default array consumes ~16 MB (4 million * 4 bytes).
+- **Is the GPU benchmark missing?**: Verify the CUDA driver/toolkit installation (`nvidia-smi`) and that the process has permission to access the device. ILGPU logs which accelerator it picked at startup.
 
 Feel free to adapt `Program.cs` to plug in other math kernels (Fourier transforms, image filters, etc.) to explore how SIMD-friendly algorithms scale across Intel and ARM alike.
 
