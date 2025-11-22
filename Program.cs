@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using ARM64_SIMD.Gpu;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -24,6 +25,21 @@ foreach (var (label, workload) in benchmarks)
 {
     var result = Benchmark.Run(label, workload, data, config);
     Print(result);
+}
+
+var gpuBenchmark = GpuBenchmark.TryCreate(out var gpuStatusMessage);
+if (!string.IsNullOrWhiteSpace(gpuStatusMessage))
+{
+    Console.WriteLine(gpuStatusMessage);
+}
+
+if (gpuBenchmark is not null)
+{
+    using (gpuBenchmark)
+    {
+        var gpuResult = Benchmark.Run("GPU (ILGPU)", gpuBenchmark.Execute, data, config);
+        Print(gpuResult);
+    }
 }
 
 static void Print(BenchmarkResult result)
@@ -111,7 +127,7 @@ internal sealed record BenchmarkResult(string Label, double Sum, TimeSpan Elapse
 
 internal static class Workloads
 {
-    private const float LogisticMultiplier = 3.96f;
+    internal const float LogisticMultiplier = 3.96f;
     private static readonly Vector<float> LogisticMultiplierVector = new(LogisticMultiplier);
     private static readonly Vector<float> OneVector = Vector<float>.One;
 

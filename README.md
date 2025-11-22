@@ -1,10 +1,11 @@
 # ARM64-SIMD Demo
 
-A .NET 10 console application that explores three increasingly optimized implementations of the same CPU-intensive task:
+A .NET 10 console application that explores four increasingly optimized implementations of the same CPU-intensive task:
 
 1. **Scalar (single thread)** – traditional loop, easiest to understand.
 2. **Parallel scalar** – partitions the scalar loop across CPU cores via `Parallel.For`.
 3. **Parallel + SIMD** – uses `System.Numerics.Vector<float>` inside the parallel loop so each core processes multiple elements per instruction (works on Intel SSE/AVX and ARM AdvSIMD).
+4. **GPU (ILGPU)** – launches the same logistic-map update on any CUDA-capable NVIDIA GPU via ILGPU, so the workload can be offloaded on both Windows and Linux boxes.
 
 The workload iterates a chaotic logistic-map function for each element of a generated float array. Chaotic math is branch-free but multiplies aggressively, making it a good fit for SIMD demonstrations.
 
@@ -24,6 +25,7 @@ The workload iterates a chaotic logistic-map function for each element of a gene
 - **Scalar**: tight `for` loop calling `IterateScalar` per element.
 - **Parallel scalar**: uses `Parallel.For` with per-thread local accumulation, then locks to combine results. Eliminates most wall-clock latency for embarrassingly parallel work but still performs one float at a time.
 - **Parallel + SIMD**: partitions the array by vector-sized ranges using `Partitioner.Create`. Each worker loads `Vector<float>` (lane count is auto-detected) and repeatedly applies `IterateSimd`. Tail elements that do not fit a full vector fall back to the scalar routine.
+- **GPU (ILGPU)**: copies the dataset into an ILGPU accelerator (preferring CUDA) and runs the logistic recurrence inside a GPU kernel written in C#, then copies results back for checksum verification.
 
 ### Why performance improves
 1. **Scalar ➔ Parallel**: Genuine concurrency. Each core receives a disjoint slice of the array, so wall-clock time roughly divides by the number of cores minus synchronization overhead.
@@ -47,7 +49,12 @@ dotnet run
 
 # Common demo: Release build with large workload
 dotnet run -c Release -- --length=4000000 --iterations=150
+
+# Run Release build while letting ILGPU pick a CUDA device
+dotnet run -c Release
 ```
+
+> **GPU prerequisites:** Install the NVIDIA driver and CUDA toolkit appropriate for your platform. ILGPU will automatically fall back to a CPU accelerator if no CUDA device is detected. See [GPU.md](GPU.md) for full instructions.
 
 Sample Release output on the authoring machine (8-lane SIMD):
 
@@ -57,6 +64,7 @@ SIMD width: 8 lanes (hardware accelerated)
 Scalar (1 thread)      1,089.2 ms  |  throughput 550.9 M it/s  |  checksum 2185294.1219
 Parallel (per core)       84.0 ms  |  throughput 7,145.4 M it/s  |  checksum 2185294.1219
 Parallel + SIMD           11.0 ms  |  throughput 54,746.0 M it/s |  checksum 2185294.1219
+GPU (ILGPU, RTX)          14.0 ms  |  throughput 42,923.7 M it/s |  checksum 2185294.1219
 ```
 
 Throughput differences illustrate how multi-core execution and vectorization compound. Results vary with CPU architecture and thermal conditions, but the checksum should stay constant if the hardware supports IEEE-754 single-precision correctly.
@@ -74,6 +82,7 @@ Throughput differences illustrate how multi-core execution and vectorization com
 - **Release run slower than expected**: Ensure the process is 64-bit and your CPU is not thermally throttled. Running from Visual Studio with the debugger attached may force Debug optimizations off.
 - **SIMD not hardware accelerated**: `Vector.IsHardwareAccelerated` returns false on very old CPUs or when targeting x86 without enabling SSE2. Switch to `net10.0` (already configured) and run on 64-bit.
 - **Out-of-memory**: Reduce `--length` or iterations; the default array consumes ~16 MB (4 million * 4 bytes).
+- **GPU benchmark missing**: Verify the CUDA driver/toolkit installation (`nvidia-smi`) and that the process has permission to access the device. ILGPU logs which accelerator it picked at startup.
 
 Feel free to adapt `Program.cs` to plug in other math kernels (Fourier transforms, image filters, etc.) to explore how SIMD-friendly algorithms scale across Intel and ARM alike.
 
