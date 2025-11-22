@@ -13,6 +13,15 @@ NOTE: This runs fine on my Intel i7-12700k CPU (8x32bit vector lanes) and the GP
 
 ---
 
+| Mode               | Time (ms) | Throughput (M iter/s) | Checksum       |
+|--------------------|-----------|-----------------------|----------------|
+| Scalar (1 thread)  | 1,083.5   | 553.8                 | 2185294.1219   |
+| Parallel (1 thread per core)| 88.0      | 6,817.8               | 2185294.1219   |
+| Parallel + SIMD (8 lanes)   | 11.0      | 54,713.1              | 2185294.1219   |
+| GPU (ILGPU, CUDA, RTX3080) | 9.9 | 60,752.1            | 2185294.1219   |
+
+---
+
 ## How It Works
 
 ### Data generation

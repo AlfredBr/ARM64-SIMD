@@ -15,7 +15,9 @@ internal sealed class GpuBenchmark : IDisposable
     {
         _context = context;
         _accelerator = accelerator;
-        _kernel = accelerator.LoadAutoGroupedStreamKernel<Index1D, ArrayView<float>, int, float>(GpuKernels.Logistic);
+        _kernel = accelerator.LoadAutoGroupedStreamKernel<Index1D, ArrayView<float>, int, float>(
+            GpuKernels.Logistic
+        );
     }
 
     public static GpuBenchmark? TryCreate(out string statusMessage)
@@ -23,20 +25,22 @@ internal sealed class GpuBenchmark : IDisposable
         try
         {
             var context = Context.Create(builder => builder.Default());
-            var device = context.Devices
-                .Where(device => device.AcceleratorType != AcceleratorType.CPU)
+            var device = context
+                .Devices.Where(device => device.AcceleratorType != AcceleratorType.CPU)
                 .OrderBy(device => device.AcceleratorType == AcceleratorType.Cuda ? 0 : 1)
                 .FirstOrDefault();
 
             if (device is null)
             {
                 context.Dispose();
-                statusMessage = "GPU (ILGPU): no compatible accelerator detected. Skipping GPU benchmark.";
+                statusMessage =
+                    "GPU (ILGPU): no compatible accelerator detected. Skipping GPU benchmark.";
                 return null;
             }
 
             var accelerator = device.CreateAccelerator(context);
-            statusMessage = $"GPU (ILGPU): using {accelerator.Name} ({accelerator.AcceleratorType}).";
+            statusMessage =
+                $"GPU (ILGPU): using {accelerator.Name} ({accelerator.AcceleratorType}).";
             return new GpuBenchmark(context, accelerator);
         }
         catch (Exception ex)
@@ -56,7 +60,12 @@ internal sealed class GpuBenchmark : IDisposable
         using var deviceBuffer = _accelerator.Allocate1D<float>(source.Length);
         deviceBuffer.CopyFromCPU(source);
 
-        _kernel(deviceBuffer.IntExtent, deviceBuffer.View, iterations, Workloads.LogisticMultiplier);
+        _kernel(
+            deviceBuffer.IntExtent,
+            deviceBuffer.View,
+            iterations,
+            Workloads.LogisticMultiplier
+        );
         _accelerator.Synchronize();
 
         var gpuResults = new float[source.Length];

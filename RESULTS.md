@@ -13,7 +13,7 @@ Collected with `dotnet run -c Release` on the provided system. Configuration: 4,
 
 - **Linear scaling with threads**: Moving from the single-threaded baseline to the parallel scalar version multiplies throughput by ~12× (554 → 6,812 M it/s), matching the expected benefit from utilizing all CPU cores for this embarrassingly parallel workload.
 - **SIMD amplification**: Adding SIMD on top of threading increases throughput by another ~7.7×, showing how vector math leverages the per-core execution units beyond mere parallelism.
-- **GPU verifies parity**: The ILGPU path matches the CPU checksum, demonstrating that the CUDA kernel executes the exact same logistic math despite running on separate hardware.
+- **GPU verifies parity**: The ILGPU path matches the CPU checksum, demonstrating that the CUDA kernel executes the same logistic math and comes to the same result despite running on very different hardware.
 - **GPU not yet dominant**: With this dataset, the GPU finishes slightly slower than the SIMD path even though it processes tens of billions of iterations per second.
 
 ## Analysis
