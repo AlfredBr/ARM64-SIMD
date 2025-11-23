@@ -14,7 +14,7 @@ The workload iterates a chaotic logistic-map function for each element of a gene
 | CPU | Cores | CPU SIMD Width | RAM | GPU | GPU Architecture | SM Count | CUDA Cores per SM | Total CUDA Cores | Cost |
 |-----|:-----:|:--------------:|----:|:---:|:----------------:|:--------:|:-----------------:|:----------------:|-----:|
 | Intel i7-12700K | 12/20 | 8 lanes × 32-bits ([AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions)) | 32 GB | RTX 3080 | Ampere | 68 | 128 | 8,704 | $2,000 |
-| ARM Cortex-A57 | 4 | 4 lanes × 32-bits ([NEON](https://armasm.com/docs/neon/overview/)) | 4 GB | onboard | Maxwell | 1 | 128 | 128 | $100 |
+| ARM Cortex-A57 | 4 | 4 lanes × 32-bits ([NEON](https://www.arm.com/technologies/neon)) | 4 GB | onboard | Maxwell | 1 | 128 | 128 | $100 |
 
 ## Sample Results
 ### Intel SIMD : width = 8 lanes, dataset = 4,000,000 floats x 150 chaos iterations
