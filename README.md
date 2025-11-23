@@ -58,8 +58,9 @@ The workload iterates a chaotic logistic-map function for each element of a gene
 ### Why performance improves
 1. **Scalar ➔ Parallel**: Genuine concurrency. Each core receives a disjoint slice of the array, so wall-clock time roughly divides by the number of cores minus synchronization overhead.
 2. **Parallel ➔ Parallel+SIMD**: Each core now updates `Vector<float>.Count` elements per instruction. On 64-bit hardware this is typically 8 lanes (256-bit) but automatically adapts to wider vectors on capable CPUs. Processing in chunks reduces load/store traffic and lets the CPU pipeline more fused multiply-adds per cycle.
+3. **Parallel+SIMD ➔ GPU**: The GPU massively parallel architecture can handle thousands of threads simultaneously, each executing the same logistic map kernel. With high memory bandwidth and many ALUs, the GPU can outperform even SIMD-optimized CPU code on large datasets.
 
-### Issues encountered (and fixes)
+### Issues we encountered during development (and fixes)
 - **Checksum mismatch**: The scalar logistic math originally multiplied in a different order than the SIMD vectorized function, producing different rounding noise. Aligning the scalar implementation to compute `value * (1 - value)` before multiplying by the constant ensured identical checksums and makes correctness comparisons meaningful.
 - **Interlocked with doubles**: `Interlocked.Add` only supports integers on older frameworks, so we replaced it with a lightweight `lock` to combine per-thread `double` sums safely.
 - **SIMD slower than parallel scalar**: The first SIMD attempt assigned single vectors to tasks, causing extreme scheduling overhead and poor cache locality. Switching to `Partitioner.Create` with chunk sizes tied to `ProcessorCount` let each worker chew through contiguous vector ranges before synchronizing, reducing contention and finally delivering the expected >50x speedup in Release builds. (NOTE: This really surprised me and I would not have discoved this without the help of AI/ChatGPT.  Amazing!)
