@@ -1,10 +1,10 @@
-﻿using ARM64_SIMD.Gpu;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ARM64_SIMD.Gpu;
 
 var config = DemoConfig.FromArgs(args);
 Console.WriteLine(
@@ -150,7 +150,8 @@ internal static class Workloads
         Parallel.For<double>(0, data.Length,
             () => 0,
             (int i, ParallelLoopState _, double localSum) => localSum + IterateScalar(data[i], iterations),
-            localSum => AddThreadSafe(ref total, localSum, gate));
+            localSum => AddThreadSafe(ref total, localSum, gate)
+        );
 
         return total;
     }
@@ -183,7 +184,8 @@ internal static class Workloads
 
                 return localSum;
             },
-            localSum => AddThreadSafe(ref total, localSum, gate));
+            localSum => AddThreadSafe(ref total, localSum, gate)
+        );
 
         for (int i = vectorLength * simdWidth; i < data.Length; i++)
         {
