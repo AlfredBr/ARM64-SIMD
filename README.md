@@ -1,4 +1,4 @@
-# ARM64-SIMD Demo
+# A SIMD Demo for Windows x64 and Linux AARCH64
 
 A .NET 10 console application that explores four increasingly optimized implementations of the same CPU-intensive task:
 
